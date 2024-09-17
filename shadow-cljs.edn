@@ -1,0 +1,16 @@
+;; shadow-cljs configuration
+{:source-paths
+ ["src/dev"
+  "src/main"
+  "src/test"]
+
+ :dependencies
+ [[reagent "1.2.0"]]
+
+ :dev-http {8080 "public"}
+
+ :builds
+ {:game {:target :browser
+         :output-dir "public/js"
+         :asset-path "js"
+         :modules {:main {:init-fn tictactoe.game/-main}}}}}
