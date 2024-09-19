@@ -1,4 +1,8 @@
 {
+  "scripts": {
+      "install-all": "npm install && npx shadow-cljs release :game && npx tailwindcss -i ./public/css/tailwind.css -o ./public/css/styles.css",
+      "start": "docker compose up"
+  },
   "devDependencies": {
     "shadow-cljs": "^2.28.15",
     "tailwindcss": "^3.4.12"
