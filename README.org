@@ -6,6 +6,11 @@ Run these commands to play TicTacToe
 - npx tailwindcss -i ./public/css/tailwind.css -o ./public/css/styles.css
 - docker compose up
 
+Or Alternatively:
+- npm run install-all
+- npm run start
+
+
 Open the browser url 'localhost:8080/'
 
 Have Fun!!! ;)
