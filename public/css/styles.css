@@ -18,4 +18,9 @@
 
 .cell {
     border: 1px solid green;
+    cursor: pointer;
+}
+
+.disabled {
+    cursor: not-allowed;
 }

@@ -1,30 +1,48 @@
 (ns tictactoe.game
-  (:require [reagent.dom.client :as client]))
+  (:require [clojure.string :as str]
+            [re-frame.core :as rf]
+            [reagent.core :as r]
+            [reagent.dom.client :as client]
+            [tictactoe.events]
+            [tictactoe.subs :as sub]))
 
 (defonce root (client/create-root (.getElementById js/document "root")))
 
-(defn cell-click
-  [cell-no]
-  (fn [el]
-    (println "cliked somewhere> " cell-no)
-    (println "cell-content= " (.-innerHTML (.-target el)))))
+(defn cell
+  [id]
+  (let [v (rf/subscribe [:cell-value id])
+        disabled? (r/atom false)]
+    (fn []
+      [:div {:id id
+             :class (str/join " " ["cell" (when @disabled? "disabled")])
+             :disabled @disabled?
+             :on-click #(when-not @disabled?
+                          (reset! disabled? true)
+                          (rf/dispatch [:cell-click id]))}
+       @v])))
 
+(defn modal-result
+  []
+  (cond
+    @(rf/subscribe [:tie]) [:h1 "tie"]
+    @(rf/subscribe [:winner]) [:h1 "winner"]))
 
 (defn board
   []
   [:div.board
+   [modal-result]
    [:div.row
-    [:div.cell {:on-click (cell-click 1)} (str "X") ]
-    [:div.cell {:on-click (cell-click 2)} (str "O") ]
-    [:div.cell {:on-click (cell-click 3)} (str "X") ]]
+    [cell 1]
+    [cell 2]
+    [cell 3]]
    [:div.row
-    [:div.cell {:on-click (cell-click 4)} (str "X") ]
-    [:div.cell {:on-click (cell-click 5)} (str "O") ]
-    [:div.cell {:on-click (cell-click 6)} (str "X") ]]
+    [cell 4]
+    [cell 5]
+    [cell 6]]
    [:div.row
-    [:div.cell {:on-click (cell-click 7)} (str "X") ]
-    [:div.cell {:on-click (cell-click 8)} (str "O") ]
-    [:div.cell {:on-click (cell-click 9)} (str "X") ]]])
+    [cell 7]
+    [cell 8]
+    [cell 9]]])
 
 (defn title-bar
   []
@@ -33,13 +51,16 @@
 
 (defn game
   []
-  [:<>
-   [title-bar]
-   [board]])
+  (fn []
+    [:<>
+     [:div
+      [title-bar]
+      [board]]]))
 
 
 (defn ^:dev/after-load render!
   []
+  (rf/dispatch-sync [:init-db])
   (client/render root [game]))
 
 (defn -main
