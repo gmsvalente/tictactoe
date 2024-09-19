@@ -75,11 +75,12 @@
               :disabled @disabled?
               :on-click #(when-not @disabled?
                            (rf/dispatch [:cell-click id]))}
-        (tiles @v)]])))
+        [:div {:class "h-12"}
+         (tiles @v)]]])))
 
 (defn board
   []
-  [:div {:class "bg-black shadow-lg rounded mt-60"}
+  [:div {:class "bg-black shadow-lg rounded mt-60 w-90 h-90"}
    [:div {:class "grid grid-cols-3 gap-4 w-80 h-80"}
     (for [i (range 1 10)]
       ^{:key i} [cell i])]])
