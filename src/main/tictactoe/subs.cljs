@@ -15,3 +15,13 @@
  :winner
  (fn [db _]
    (-> db :game :winner?)))
+
+(rf/reg-sub
+ :hall-of-fame
+ (fn [db]
+   (db :hall-of-fame)))
+
+(rf/reg-sub
+ :cell-disabled
+ (fn [db [_ id]]
+   ((-> db :game :cells) id)))
