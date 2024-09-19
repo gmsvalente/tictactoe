@@ -1,0 +1,11 @@
+* Instructions
+Run these commands to play TicTacToe
+
+- npm install
+- npx shadow-cljs release :game
+- npx tailwindcss -i ./public/css/tailwind.css -o ./public/css/styles.css
+- docker compose up
+
+Open the browser url 'localhost:8080/'
+
+Have Fun!!! ;)
