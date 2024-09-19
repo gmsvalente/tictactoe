@@ -7,9 +7,11 @@
             [tictactoe.subs :as sub]
             [tictactoe.tiles :refer [tiles]]))
 
+;; div root
 (defonce root (client/create-root (.getElementById js/document "root")))
 
 (defn hall-of-fame
+  "The score of the game"
   []
   (let [hof (rf/subscribe [:hall-of-fame])]
     [:div {:class "flex flex-row justify-around items-center h-80"}
@@ -26,20 +28,17 @@
        [:h1 {:class "h-full text-3xl"} (@hof "O")]]]]))
 
 (defn winner
+  "The winner banner"
   [winner]
   [:div {:class "h-80 w-80  flex flex-col justify-between"}
    [:h1 {:class "text-4xl"}
-    "The winner is " [:span  winner] "!"]
-   [hall-of-fame]])
-
-(defn tie
-  []
-  [:div {:class "h-80 w-80"}
-   [:h1 {:class "text-4xl"}
-    "This is a Tie!"]
+    (if winner
+      (str "The winner is " winner " !")
+      "This is a Tie !")]
    [hall-of-fame]])
 
 (defn modal
+  "This modal will pop when tie or winner!"
   [result]
   [:div {:class "relative z-10"}
    [:div {:class "fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" :aria-hidden true}]
@@ -50,13 +49,14 @@
        [:div {:class "sm:flex sm:items-start"}
         (if result 
           [winner result]
-          [tie])
+          [winner nil])
         [:button {:class "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                   :on-click #(rf/dispatch [:reset-game])}
          "Continue"]]]]]]])
 
 
 (defn modal-result
+  "Checks the result of the game and display modal if game-over"
   []
   (let [winner? (rf/subscribe [:winner])
         tie? (rf/subscribe [:tie])]
@@ -65,6 +65,7 @@
       @winner? [modal @winner?])))
 
 (defn cell
+  "The cells of tictactoe"
   [id class]
   (let [v (rf/subscribe [:cell-value id])
         disabled? (rf/subscribe [:cell-disabled id])]
@@ -79,6 +80,7 @@
          (tiles @v)]]])))
 
 (defn board
+  "The TTT board"
   []
   [:div {:class "bg-black shadow-lg rounded mt-60 w-90 h-90"}
    [:div {:class "grid grid-cols-3 gap-4 w-80 h-80"}
@@ -86,26 +88,28 @@
       ^{:key i} [cell i])]])
 
 (defn title-bar
+  "The title bar"
   []
   [:div {:class "bg-blue-500 justify-center w-full h-20 shadow-lg"}
    [:h1 {:class "h-full font-bold flex flex-col justify-center items-center font-mono text-2xl text-white"} "TicTacToe"]])
 
 (defn game
+  "The game itself"
   []
   (fn []
     [:div {:class "flex flex-col items-center h-screen w-full bg-blue-300"}
      [title-bar]
      [modal-result]
-     [board]
-     ]))
+     [board]]))
 
 
 (defn ^:dev/after-load render!
+  "Reloader"
   []
-  (rf/dispatch-sync [:init-db])
   (client/render root [game]))
 
 (defn -main
   []
   (println "TICTACTOE")
+  (rf/dispatch-sync [:init-db]) ;; generate the re-frame app db
   (render!))
