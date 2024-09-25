@@ -61,8 +61,8 @@
   (let [winner? (rf/subscribe [:winner])
         tie? (rf/subscribe [:tie])]
     (cond
-      @tie? [modal nil]
-      @winner? [modal @winner?])))
+      @winner? [modal @winner?]
+      @tie? [modal nil])))
 
 (defn cell
   "The cells of tictactoe"
